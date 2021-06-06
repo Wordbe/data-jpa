@@ -1,6 +1,7 @@
 package co.wordbe.jpaspringdatajpa.repository;
 
 import co.wordbe.jpaspringdatajpa.entity.Member;
+import co.wordbe.jpaspringdatajpa.entity.Team;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MemberRepositoryTest {
 
     @Autowired MemberRepository memberRepository;
+    @Autowired TeamRepository teamRepository;
 
     @Test
     public void 회원생성_조회() throws Exception {
@@ -63,5 +65,33 @@ class MemberRepositoryTest {
 
         long deletedCount = memberRepository.count();
         assertThat(deletedCount).isEqualTo(0);
+    }
+
+    @Test
+    public void findByUsernameAndAgeGreaterThan() {
+        Member member1 = new Member("Jen", 10);
+        Member member2 = new Member("Jen", 20);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> result = memberRepository.findByUsernameAndAgeGreaterThan("Jen", 15);
+
+        assertThat(result.get(0).getUsername()).isEqualTo("Jen");
+        assertThat(result.get(0).getAge()).isEqualTo(20);
+        assertThat(result.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void findUser() {
+        Member member1 = new Member("Jen", 10);
+        Member member2 = new Member("Jen", 20);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> result = memberRepository.findUser("Jen", 10);
+
+        assertThat(result.get(0).getUsername()).isEqualTo("Jen");
+        assertThat(result.get(0).getAge()).isEqualTo(10);
+        assertThat(result.size()).isEqualTo(1);
     }
 }
