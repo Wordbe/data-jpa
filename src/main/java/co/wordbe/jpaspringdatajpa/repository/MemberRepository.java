@@ -2,6 +2,8 @@ package co.wordbe.jpaspringdatajpa.repository;
 
 import co.wordbe.jpaspringdatajpa.dto.MemberDto;
 import co.wordbe.jpaspringdatajpa.entity.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -46,7 +48,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("select m from Member m where m.username in :names")
     List<Member> findByNames(@Param("names") Collection<String> names);
 
-    List<Member> findMemberListByUsername(String usernae); // 컬렉션
-    Member findMemberByUsername(String usernae); // 단건
-    Optional<Member> findOptionalMemberByUsername(String usernae); // 단건 옵셔널
+    List<Member> findMemberListByUsername(String username); // 컬렉션
+    Member findMemberByUsername(String username); // 단건
+    Optional<Member> findOptionalMemberByUsername(String username); // 단건 옵셔널
+
+    @Query(value = "select m from Member m left join m.team t",
+            countQuery = "select count(m) from Member m")
+    Page<Member> findByAge(int age, Pageable pageable);
+
 }
