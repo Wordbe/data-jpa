@@ -1,7 +1,6 @@
 package co.wordbe.jpaspringdatajpa.entity;
 
 import lombok.*;
-import org.springframework.data.jpa.repository.EntityGraph;
 
 import javax.persistence.*;
 
@@ -10,7 +9,7 @@ import javax.persistence.*;
 @ToString(of = {"id", "username", "age"})
 @NamedEntityGraph(name = "Member.all", attributeNodes = @NamedAttributeNode("team"))
 @Entity
-public class Member extends BaseEntity {
+public class Member {
 
     @Id @GeneratedValue
     @Column(name = "member_id")
