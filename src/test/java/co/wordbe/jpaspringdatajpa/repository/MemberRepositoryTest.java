@@ -1,7 +1,10 @@
 package co.wordbe.jpaspringdatajpa.repository;
 
+import co.wordbe.jpaspringdatajpa.dto.MemberDto;
 import co.wordbe.jpaspringdatajpa.entity.Member;
 import co.wordbe.jpaspringdatajpa.entity.Team;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.transform.Transformers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -278,5 +281,39 @@ class MemberRepositoryTest {
             String name = nestedClosedProjections.getTeam().getName();
             System.out.println("name = " + name);
         }
+    }
+
+    @Test
+    public void nativeQuery() {
+        //given
+        Team teamA = new Team("teamA");
+        em.persist(teamA);
+
+        Member m1 = new Member("m1", 0, teamA);
+        Member m2 = new Member("m2", 0, teamA);
+        em.persist(m1);
+        em.persist(m2);
+        em.flush();
+        em.clear();
+
+        //when
+//        Member result = memberRepository.findByNativeQuery("m1");
+//        System.out.println("result = " + result);
+        Page<MemberProjection> result = memberRepository.findByNativeProjection(PageRequest.of(0, 10));
+        List<MemberProjection> content = result.getContent();
+        for (MemberProjection memberProjection : content) {
+            System.out.println("memberProjection.getUsername() = " + memberProjection.getUsername());
+            System.out.println("memberProjection.getTeamName() = " + memberProjection.getTeamName());
+        }
+
+        // 동적쿼리
+//        String sql = "select m.username as username from member m";
+//        List<MemberDto> username = em.createNamedQuery(sql)
+//                .setFirstResult(0)
+//                .setMaxResults(10)
+//                .unwrap(NativeQuery.class)
+//                .addScalar("username")
+//                .setResultTransformer(Transformers.aliasToBean(MemberDto.class))
+//                .getResultList();
     }
 }
